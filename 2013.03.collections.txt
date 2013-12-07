@@ -1,0 +1,89 @@
+
+    >>> print("""########################################\n#\n#       Module of the Month:\n#       --------------------\n#           collections\n#\n########################################""")
+    ########################################
+    #
+    #       Module of the Month:
+    #       --------------------
+    #           collections
+    #
+    ########################################
+
+Collections
+===========
+
+    >>> from collections import *
+
+deque
+-----
+
+A fast insert
+
+    >>> d = deque()
+    >>> d.appendleft(1)
+
+defaultdict
+-----------
+
+A dict that takes a 'factory method'
+
+    >>> d = defaultdict(int)
+    >>> int()
+    0
+    >>> d['jan'] += 1
+    >>> d['feb']
+    0
+    >>> sorted(d.items())
+    [('feb', 0), ('jan', 1)]
+
+    >>> dates = ((2012, 1, 20), (2012, 7, 3), (2012, 6, 22), (2013, 9, 19), (2011, 1, 21), (2012, 10, 11), (2011, 8, 10), (2013, 8, 21), (2013, 12, 23), (2011, 11, 21))
+    >>> by_year = defaultdict(list)
+    >>> for n in dates:
+    ...     by_year[n[0]].append(n)
+    >>> sorted(by_year.items())
+    [(2011, [(2011, 1, 21), (2011, 8, 10), (2011, 11, 21)]), (2012, [(2012, 1, 20), (2012, 7, 3), (2012, 6, 22), (2012, 10, 11)]), (2013, [(2013, 9, 19), (2013, 8, 21), (2013, 12, 23)])]
+
+Counter!
+--------
+
+Turns out most of the time, you are going to use defaultdict to count.
+
+    >>> c = Counter('Module of the month: ')
+    >>> for n in 'collections':
+    ...     c[n] += 1
+    >>> c.most_common(5)  # doctest: +SKIP
+    [('o', 5), (' ', 4), ('e', 3), ('l', 3), ('t', 3)]
+
+    >>> counter = {}
+    >>> for n in 'Module of the month: collections':
+    ...     if n in counter:
+    ...         counter[n] += 1
+    ...     else:
+    ...         counter[n] = 1
+    >>> sorted(counter.items(), key=lambda x: x[1], reverse=True)[:5]  # doctest: +SKIP
+    [('o', 5), (' ', 4), ('e', 3), ('l', 3), ('t', 3)]
+
+namedtuple
+----------
+
+My favorite!
+
+    >>> presentation = namedtuple('presentation', ['speaker', 'length', 'title'])
+    >>> p = presentation('rory', 'too long', 'Something something module of the month')
+    >>> print(p)
+    presentation(speaker='rory', length='too long', title='Something something module of the month')
+    >>> p[0:1] + ('something',)
+    ('rory', 'something')
+    >>> p.speaker
+    'rory'
+
+ChainMap
+--------
+
+New in python 3.3
+
+    >>> cm = ChainMap({'motm': 'collections'}, {'location': 'mtlpy'})
+    >>> (cm['motm'], cm['location'])
+    ('collections', 'mtlpy')
+    >>> cm.maps.insert(0, {'motm': 'playerpiano'})
+    >>> cm['motm']
+    'playerpiano'

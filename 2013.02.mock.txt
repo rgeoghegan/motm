@@ -1,0 +1,80 @@
+
+    >>> print """########################################\n#\n#       Module of the Month:\n#       --------------------\n#               mock\n#\n########################################"""
+    ########################################
+    #
+    #       Module of the Month:
+    #       --------------------
+    #               mock
+    #
+    ########################################
+
+Mock
+====
+
+Import the mock.
+
+    >>> import mock
+    >>> my_mock = mock.Mock()
+    >>> my_mock # doctest: +SKIP
+    <Mock id='4552779984'>
+
+Duck typing.
+
+    >>> my_mock.walk # doctest: +SKIP
+    <Mock name='mock.walk' id='4437251344'>
+    >>> my_mock.quack() # doctest: +SKIP
+    <Mock name='mock.quack()' id='4437253136'>
+
+Can get anything you want
+
+    >>> my_mock.foo().bar.baz() # doctest: +SKIP
+    <Mock name='mock.foo().bar.baz()' id='4410736016'>
+    >>> my_mock("a", b="b") # doctest: +SKIP
+    <Mock name='mock()' id='4410784016'>
+    >>> my_mock.call_args # doctest: +SKIP
+    call('a', b='b')
+    >>> (my_mock.call_args[0], my_mock.call_args[1]) # doctest: +SKIP
+    (('a',), {'b': 'b'})
+
+Can set a return value
+
+    >>> my_mock.return_value = "mock"
+    >>> print "This is a " + my_mock()
+    This is a mock
+
+Now to use sentinels
+
+    >>> def foozer(a, b):
+    ...    a.foo(b)
+    >>> mock.sentinel.bar
+    sentinel.bar
+    >>> mock.sentinel.bar == mock.sentinel.bar
+    True
+    >>> foozer(my_mock, mock.sentinel.bar)
+    >>> my_mock.foo.call_args
+    call(sentinel.bar)
+
+Now for patch
+
+    >>> import socket
+    >>> def pingpong():
+    ...    soc = socket.create_connection(("home", 1234))
+    ...    soc.send("HELLO")
+    ...    return soc.recv(1024)
+
+    >>> my_mock = mock.Mock()
+    >>> @mock.patch('socket.create_connection', mock.Mock(return_value=my_mock))
+    ... def test_ping_pong():
+    ...    pingpong()
+    ...    assert my_mock.send.call_args[0][0] == 'HELLO'
+    ...    assert my_mock.recv.call_args[0][0] == 1024
+    >>> test_ping_pong()
+
+    >>> @mock.patch('socket.create_connection')
+    ... def test_ping_pong_again(mocked_create_connection):
+    ...    mocked_create_connection.return_value.recv.return_value = mock.sentinel.recv
+    ...    ret = pingpong()
+    ...    assert my_mock.send.call_args[0][0] == 'HELLO'
+    ...    assert my_mock.recv.call_args[0][0] == 1024
+    ...    assert ret == mock.sentinel.recv
+    >>> test_ping_pong_again()

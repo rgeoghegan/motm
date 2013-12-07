@@ -1,0 +1,65 @@
+
+    >>> print("""########################################\n#\n#       Module of the Month:\n#       --------------------\n#               path\n#\n########################################""")
+    ########################################
+    #
+    #       Module of the Month:
+    #       --------------------
+    #               path
+    #
+    ########################################
+
+Path
+====
+
+Import the module
+
+    >>> from path import path
+    >>> here = path('.')
+    >>> print(here)
+    .
+
+Can stick paths together with the '/' operator
+
+    >>> here / 'there'
+    path('./there')
+    >>> everywhere = path('everywhere')
+    >>> here / 'there' / everywhere
+    path('./there/everywhere')
+
+It's a full string!
+
+    >>> everywhere.upper()
+    'EVERYWHERE'
+    >>> everywhere.split('e')
+    ['', 'v', 'rywh', 'r', '']
+
+You also get the full os.path functions as methods
+
+    >>> somewhere = path('~/somewhere')
+    >>> somewhere.exists()
+    False
+    >>> somewhere.expanduser()
+    path('/Users/rory/somewhere')
+    >>> (somewhere / '..' / 'elsewhere').normpath()
+    path('~/elsewhere')
+
+And also the os methods
+
+    >>> there = here / 'there'
+    >>> there.exists()
+    False
+    >>> there.mkdir()
+    path('./there')
+    >>> there.exists()
+    True
+    >>> there.chdir()
+    >>> import os
+    >>> os.getcwd()
+    '/Users/rory/Documents/mtlpy/presentations/there'
+    >>> os.chdir('..')
+
+And you can open files
+
+    >>> a_file = there / 'a_file'
+    >>> a_file.open('wb')
+    <_io.BufferedWriter name=path('./there/a_file')>

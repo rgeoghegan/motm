@@ -1,0 +1,65 @@
+Itertools part II
+=================
+
+Combinatorics
+-------------
+
+    >>> print("\n".join(["*" * 82, "*" + " " * 80 + "*", "*" + "Itertools".center(80) + "*", "*" + "Part II".center(80) + "*", "*" + " " * 80 + "*", "*" * 82]))
+    **********************************************************************************
+    *                                                                                *
+    *                                   Itertools                                    *
+    *                                    Part II                                     *
+    *                                                                                *
+    **********************************************************************************
+
+Start with the four main combinatoric functions, product:
+
+    >>> import itertools
+    >>> list(itertools.product([1,2], 'ab'))
+    [(1, 'a'), (1, 'b'), (2, 'a'), (2, 'b')]
+
+Now for permutations:
+
+    >>> perms = itertools.permutations(["Qualified", "Quazar", "Robust", "Rotations"], 2)
+    >>> [" ".join(n) for n in perms]
+    ['Qualified Quazar', 'Qualified Robust', 'Qualified Rotations', 'Quazar Qualified', 'Quazar Robust', 'Quazar Rotations', 'Robust Qualified', 'Robust Quazar', 'Robust Rotations', 'Rotations Qualified', 'Rotations Quazar', 'Rotations Robust']
+
+Combinations is exactly the same except we stip out doubling the same word.
+
+    >>> combs = itertools.combinations(["Qualified", "Quazar", "Robust", "Rotations"], 2)
+    >>> [" ".join(n) for n in combs]
+    ['Qualified Quazar', 'Qualified Robust', 'Qualified Rotations', 'Quazar Robust', 'Quazar Rotations', 'Robust Rotations']
+
+Combinations can also be done with replacements.
+
+    >>> combs2 = itertools.combinations_with_replacement(["Qualified", "Quazar", "Robust", "Rotations"], 2)
+    >>> [" ".join(n) for n in combs2]
+    ['Qualified Qualified', 'Qualified Quazar', 'Qualified Robust', 'Qualified Rotations', 'Quazar Quazar', 'Quazar Robust', 'Quazar Rotations', 'Robust Robust', 'Robust Rotations', 'Rotations Rotations']
+
+Generator Modifiers
+-------------------
+
+Now for functions that aggregate, divide or store up generators.
+
+Wee, groupby!
+
+    >>> packages = "argparse array asyncore base64 bz2 cmath cmd colorsys cProfile csv ctypes datetime decimal errno fractions functools".split()
+    >>> groups = itertools.groupby(packages, lambda name: name[0])
+    >>> for key, group in groups:
+    ...    print "Key", key, ":", " ".join(group)
+    Key a : argparse array asyncore
+    Key b : base64 bz2
+    Key c : cmath cmd colorsys cProfile csv ctypes
+    Key d : datetime decimal
+    Key e : errno
+    Key f : fractions functools
+
+Okay, now for tee.
+
+    >>> words = "Dr. Emmett Brown: The way I see it, if you're gonna build a time machine into a car, why not do it with some style?".split()
+    >>> now, later = itertools.tee(words)
+    >>> [next(now), next(now), next(now), next(now), next(now)]
+    ['Dr.', 'Emmett', 'Brown:', 'The', 'way']
+    >>> [next(later), next(later), next(later), next(later), next(later)]
+    ['Dr.', 'Emmett', 'Brown:', 'The', 'way']
+    

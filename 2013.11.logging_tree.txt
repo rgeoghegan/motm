@@ -1,0 +1,58 @@
+    >>> print("""####################################\n#\n#       Module of the Month:\n#       --------------------\n#           logging_tree\n#\n####################################""")
+    ####################################
+    #
+    #       Module of the Month:
+    #       --------------------
+    #           logging_tree
+    #
+    ####################################
+
+logging_tree
+============
+
+Ask who here likes logging?
+
+logging sucks!
+--------------
+
+
+    >>> import sys
+    >>> import logging
+    >>> logging.info("I am information!")
+    >>> logging.error("Error!")# doctest: +SKIP
+    ERROR:root:Error!
+    >>> logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
+    >>> logging.info("I am information!")
+    >>> root_logger = logging.getLogger('root')
+    >>> root_logger.setLevel(logging.INFO)
+    >>> root_logger.addHandler(logging.StreamHandler(sys.stdout))
+    >>> root_logger.info("I am information!")# doctest: +SKIP
+    I am information!
+    INFO:root:I am infomation!
+    >>> logging.info("I am information!")
+
+How to sort things out
+----------------------
+
+    >>> root_logger = logging.getLogger()
+    >>> root_logger.setLevel(logging.INFO)
+    >>> for hdlr in root_logger.handlers:
+    ...     root_logger.removeHandler(hdlr)
+    >>> root_logger.addHandler(logging.StreamHandler(sys.stdout))
+    >>> root_logger.info("I am information!")
+    I am information!
+    >>> logging.info("I am information!")
+    I am information!
+
+Figure out what is what
+-----------------------
+
+    >>> import logging_tree
+    >>> logging_tree.printout()# doctest: +SKIP
+    <--""
+       Level INFO
+       Handler Stream <_io.TextIOWrapper name='<stdout>' mode='w' encoding='UTF-8'>
+       |
+       o<--"root"
+           Level INFO
+           Handler Stream <_io.TextIOWrapper name='<stdout>' mode='w' encoding='UTF-8'>

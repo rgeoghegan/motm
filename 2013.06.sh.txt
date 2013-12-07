@@ -1,0 +1,43 @@
+    >>> print("""########################################\n#\n#       Module of the Month:\n#       --------------------\n#                sh\n#\n########################################""")
+    ########################################
+    #
+    #       Module of the Month:
+    #       --------------------
+    #                sh
+    #
+    ########################################
+
+    >>> import os
+    >>> os.chdir("example")
+    >>> open("hello.txt", "w").write("hello")
+    5
+    >>> from sh import ls
+    >>> print(ls()) # doctest: +NORMALIZE_WHITESPACE
+    hello.txt
+
+    >>> content = ls(l=True)
+    >>> print(content) # doctest: +SKIP
+    total 8
+    -rw-r--r--  1 rory  staff  5  10 Jun 18:45 hello.txt
+
+    >>> print(content.split('\n')[1].split()) # doctest: +SKIP
+    ['-rw-r--r--', '1', 'rory', 'staff', '5', '10', 'Jun', '18:45', 'hello.txt']
+    >>> open("hello.c", "w").write("""
+    ... #include <stdio.h>
+    ... int main() {
+    ...     printf("Hello World!\\n");
+    ...     return 0;
+    ... }
+    ... """)
+    79
+    >>> from sh import clang
+    >>> clang("hello.c", o="hello") # doctest: +NORMALIZE_WHITESPACE
+
+    >>> from sh import Command
+    >>> hello = Command("./hello")
+    >>> hello() # doctest: +NORMALIZE_WHITESPACE
+    Hello World!
+
+    >>> from sh import rm
+    >>> rm("hello.txt", "hello", "hello.c") # doctest: +NORMALIZE_WHITESPACE
+
