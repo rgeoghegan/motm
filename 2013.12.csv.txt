@@ -1,0 +1,124 @@
+    >>> print("""####################################\n#\n#       Module of the Month:\n#       --------------------\n#               csv\n#\n####################################""")
+    ####################################
+    #
+    #       Module of the Month:
+    #       --------------------
+    #               csv
+    #
+    ####################################
+
+A very simple but yet a very usefull module!
+
+    >>> my_example_csv = '''motm,date\nmock,"Feb, 2013"\nsh,"Jun, 2013"\npath,"Oct, 2013"\nlogging_tree,"Nov, 2013"'''
+    >>> print(my_example_csv)
+    motm,date
+    mock,"Feb, 2013"
+    sh,"Jun, 2013"
+    path,"Oct, 2013"
+    logging_tree,"Nov, 2013"
+
+Split by hand
+-------------
+    
+Let's try splitting by hand! (Hint: this won't turn out well)
+
+    >>> split_by_hand = []
+    >>> for row in my_example_csv.split('\n'):
+    ...     split_by_hand.append(row.split(','))
+
+Now to show with pprint.
+
+    >>> from pprint import pprint
+    >>> pprint(split_by_hand)
+    [['motm', 'date'],
+     ['mock', '"Feb', ' 2013"'],
+     ['sh', '"Jun', ' 2013"'],
+     ['path', '"Oct', ' 2013"'],
+     ['logging_tree', '"Nov', ' 2013"']]
+
+Notice the split dates :(
+
+Basic reader
+------------
+
+    >>> import csv
+    >>> csv_reader = csv.reader(my_example_csv.split('\n'))
+
+We get a regular old iterator, which we can fetch one line at a time.
+
+    >>> next(csv_reader)
+    ['motm', 'date']
+
+Or all the lines at the same time.
+
+    >>> pprint(list(csv_reader))
+    [['mock', 'Feb, 2013'],
+     ['sh', 'Jun, 2013'],
+     ['path', 'Oct, 2013'],
+     ['logging_tree', 'Nov, 2013']]
+
+Using DictReader
+----------------
+
+Now if there is a regular old table in csv file, with columns and rows that align, we can use the DictReader to get a sequence of dictionnairies.
+
+    >>> csv_reader = csv.DictReader(my_example_csv.split('\n'))
+    >>> pprint(list(csv_reader))
+    [{'date': 'Feb, 2013', 'motm': 'mock'},
+     {'date': 'Jun, 2013', 'motm': 'sh'},
+     {'date': 'Oct, 2013', 'motm': 'path'},
+     {'date': 'Nov, 2013', 'motm': 'logging_tree'}]
+
+Writing CSV files
+-----------------
+
+Now for writing out csv files. Let's gingerly add a column to our data.
+
+    >>> data = [
+    ...    ['motm', 'date', 'rating'],
+    ...    ['mock', 'Feb, 2013', 'great'],
+    ...    ['sh', 'Jun, 2013', 'ok'],
+    ...    ['path', 'Oct, 2013', 'meh'],
+    ...    ['logging_tree', 'Nov, 2013', 'bad\nstill needs work']
+    ... ]
+
+    >>> from io import StringIO
+
+Ya forgot that we were running in python 3, didn't ya? Note that the io module also exists in python 2.7.
+
+    >>> outfile = StringIO()
+    >>> writer = csv.writer(outfile)
+    >>> writer.writerows(data)
+    >>> print(outfile.getvalue()) # doctest: +SKIP
+    motm,date,raiting
+    mock,"Feb, 2013",great
+    sh,"Jun, 2013",ok
+    path,"Oct, 2013",meh
+    logging_tree,"Nov, 2013","bad
+    still needs work"
+
+OK, let's use the dict writer. Remember that the fieldnames must be
+specified to figure out the order of the columns.
+
+    >>> outfile = StringIO()
+    >>> header = data[0]
+    >>> writer = csv.DictWriter(outfile, header)
+
+Let's turn the data list into a list of dicts!
+
+    >>> dict_data = [{k: v for (k, v) in zip(header, row)} for row in data[1:]]
+    >>> pprint(dict_data)
+    [{'date': 'Feb, 2013', 'motm': 'mock', 'rating': 'great'},
+     {'date': 'Jun, 2013', 'motm': 'sh', 'rating': 'ok'},
+     {'date': 'Oct, 2013', 'motm': 'path', 'rating': 'meh'},
+     {'date': 'Nov, 2013',
+      'motm': 'logging_tree',
+      'rating': 'bad\nstill needs work'}]
+
+    >>> writer.writerows(dict_data)
+    >>> print(outfile.getvalue()) # doctest: +SKIP
+    mock,"Feb, 2013",great
+    sh,"Jun, 2013",ok
+    path,"Oct, 2013",meh
+    logging_tree,"Nov, 2013","bad
+    still needs work"
